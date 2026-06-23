@@ -8,6 +8,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => void
   resetPassword: (email: string) => Promise<{ error: any }>
+  updateProfile: (data: FormData) => Promise<{ error: any }>
   loading: boolean
 }
 
@@ -76,6 +77,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const updateProfile = async (data: FormData) => {
+    if (!user) return { error: new Error('Usuário não autenticado') }
+    try {
+      await pb.collection('users').update(user.id, data)
+      await pb.collection('users').authRefresh()
+      return { error: null }
+    } catch (error) {
+      return { error }
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -85,6 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         resetPassword,
+        updateProfile,
         loading,
       }}
     >

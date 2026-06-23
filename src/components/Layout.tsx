@@ -6,6 +6,8 @@ import { Menu, X, Hexagon, ArrowRight } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
+import pb from '@/lib/pocketbase/client'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export function Layout() {
   const [scrolled, setScrolled] = useState(false)
@@ -83,9 +85,21 @@ export function Layout() {
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-slate-300">
+                <span className="text-sm font-medium text-slate-300 hidden lg:inline-block">
                   Olá, {user?.name || user?.email?.split('@')[0]}
                 </span>
+                <Avatar className="w-8 h-8 border border-white/20">
+                  <AvatarImage
+                    src={
+                      user?.avatar
+                        ? pb.files.getUrl(user, user.avatar)
+                        : `https://img.usecurling.com/ppl/thumbnail?seed=${user?.id}`
+                    }
+                  />
+                  <AvatarFallback className="bg-slate-800 text-xs text-violet-300">
+                    {user?.name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <Button
                   variant="outline"
                   onClick={handleLogout}
@@ -140,8 +154,22 @@ export function Layout() {
           <div className="flex flex-col gap-4 mt-8">
             {isAuthenticated ? (
               <>
-                <div className="text-lg font-medium text-slate-300 mb-2">
-                  Logado como {user?.name || user?.email}
+                <div className="flex items-center gap-3 mb-2">
+                  <Avatar className="w-10 h-10 border border-white/20">
+                    <AvatarImage
+                      src={
+                        user?.avatar
+                          ? pb.files.getUrl(user, user.avatar)
+                          : `https://img.usecurling.com/ppl/thumbnail?seed=${user?.id}`
+                      }
+                    />
+                    <AvatarFallback className="bg-slate-800 text-sm text-violet-300">
+                      {user?.name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-lg font-medium text-slate-300">
+                    {user?.name || user?.email}
+                  </div>
                 </div>
                 <Button
                   variant="outline"
