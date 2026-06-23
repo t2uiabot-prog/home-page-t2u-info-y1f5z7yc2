@@ -66,7 +66,7 @@ export default function Signup() {
       title: 'Conta criada com sucesso!',
       description: 'Bem-vindo ao t2u.info.',
     })
-    navigate('/')
+    navigate('/dashboard')
   }
 
   return (

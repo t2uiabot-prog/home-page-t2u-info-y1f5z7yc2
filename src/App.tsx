@@ -8,11 +8,19 @@ import { Layout } from './components/Layout'
 import { AuthProvider, useAuth } from './hooks/use-auth'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import ForgotPassword from './pages/ForgotPassword'
 
 const GuestRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading } = useAuth()
   if (loading) return null
-  return isAuthenticated ? <Navigate to="/" replace /> : <>{children}</>
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <>{children}</>
+}
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, loading } = useAuth()
+  if (loading) return null
+  return !isAuthenticated ? <Navigate to="/login" replace /> : <>{children}</>
 }
 
 const App = () => (
@@ -24,6 +32,14 @@ const App = () => (
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/login"
               element={
@@ -37,6 +53,14 @@ const App = () => (
               element={
                 <GuestRoute>
                   <Signup />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <GuestRoute>
+                  <ForgotPassword />
                 </GuestRoute>
               }
             />

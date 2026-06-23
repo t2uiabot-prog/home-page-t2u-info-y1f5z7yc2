@@ -46,7 +46,7 @@ export default function Login() {
       title: 'Login realizado com sucesso',
       description: 'Bem-vindo de volta!',
     })
-    navigate('/')
+    navigate('/dashboard')
   }
 
   return (
@@ -75,9 +75,17 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-200">
-                Senha
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-slate-200">
+                  Senha
+                </Label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-violet-400 hover:text-violet-300 hover:underline"
+                >
+                  Esqueceu a senha?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"

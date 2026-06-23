@@ -70,6 +70,14 @@ export function Layout() {
                 {l.name}
               </a>
             ))}
+            {isAuthenticated && (
+              <Link
+                to="/dashboard"
+                className="hover:text-white transition-colors hover:underline underline-offset-4 decoration-violet-500 decoration-2"
+              >
+                Dashboard
+              </Link>
+            )}
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
@@ -120,6 +128,15 @@ export function Layout() {
               {l.name}
             </a>
           ))}
+          {isAuthenticated && (
+            <Link
+              to="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-semibold border-b border-white/10 pb-4 text-slate-200"
+            >
+              Dashboard
+            </Link>
+          )}
           <div className="flex flex-col gap-4 mt-8">
             {isAuthenticated ? (
               <>
