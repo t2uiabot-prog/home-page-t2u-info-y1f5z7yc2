@@ -1,10 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Menu, X, Hexagon, ArrowRight } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/hooks/use-auth'
 
 export function Layout() {
   const [scrolled, setScrolled] = useState(false)
@@ -18,9 +19,9 @@ export function Layout() {
   }, [])
 
   const navLinks = [
-    { name: 'Recursos', href: '#recursos' },
-    { name: 'Como Funciona', href: '#como-funciona' },
-    { name: 'Sobre', href: '#sobre' },
+    { name: 'Recursos', href: '/#recursos' },
+    { name: 'Como Funciona', href: '/#como-funciona' },
+    { name: 'Sobre', href: '/#sobre' },
   ]
 
   const handleSubscribe = (e: React.FormEvent) => {
@@ -32,8 +33,13 @@ export function Layout() {
     ;(e.target as HTMLFormElement).reset()
   }
 
-  const handleAction = () => {
-    toast({ title: 'Redirecionando...', description: 'Abrindo portal de autenticação.' })
+  const { isAuthenticated, user, signOut } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    signOut()
+    toast({ title: 'Sessão encerrada', description: 'Você saiu da sua conta com sucesso.' })
+    navigate('/')
     setIsOpen(false)
   }
 
@@ -46,13 +52,13 @@ export function Layout() {
         )}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex items-center gap-2 text-2xl font-extrabold tracking-tighter hover:opacity-80 transition-opacity"
           >
             <Hexagon className="w-8 h-8 text-violet-500 fill-violet-500/20" />
             t2u.info
-          </a>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
             {navLinks.map((l) => (
@@ -67,19 +73,33 @@ export function Layout() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={handleAction}
-              className="text-slate-300 hover:text-white hover:bg-white/5 rounded-full px-6"
-            >
-              Entrar
-            </Button>
-            <Button
-              onClick={handleAction}
-              className="bg-gradient-primary rounded-full px-6 font-semibold"
-            >
-              Começar Agora
-            </Button>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-slate-300">
+                  Olá, {user?.name || user?.email?.split('@')[0]}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={handleLogout}
+                  className="border-white/10 hover:bg-white/5 text-slate-300 rounded-full px-6"
+                >
+                  Sair
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="text-slate-300 hover:text-white hover:bg-white/5 rounded-full px-6"
+                >
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button asChild className="bg-gradient-primary rounded-full px-6 font-semibold">
+                  <Link to="/signup">Começar Agora</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           <button className="md:hidden text-slate-300 p-2" onClick={() => setIsOpen(!isOpen)}>
@@ -101,19 +121,38 @@ export function Layout() {
             </a>
           ))}
           <div className="flex flex-col gap-4 mt-8">
-            <Button
-              variant="outline"
-              onClick={handleAction}
-              className="w-full glass-panel h-14 text-lg rounded-full border-white/20"
-            >
-              Entrar
-            </Button>
-            <Button
-              onClick={handleAction}
-              className="w-full bg-gradient-primary h-14 text-lg rounded-full"
-            >
-              Começar Agora
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <div className="text-lg font-medium text-slate-300 mb-2">
+                  Logado como {user?.name || user?.email}
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={handleLogout}
+                  className="w-full glass-panel h-14 text-lg rounded-full border-white/20"
+                >
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  asChild
+                  onClick={() => setIsOpen(false)}
+                  className="w-full glass-panel h-14 text-lg rounded-full border-white/20"
+                >
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button
+                  asChild
+                  onClick={() => setIsOpen(false)}
+                  className="w-full bg-gradient-primary h-14 text-lg rounded-full"
+                >
+                  <Link to="/signup">Começar Agora</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -126,12 +165,12 @@ export function Layout() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="flex items-center gap-2 text-xl font-bold tracking-tighter mb-4"
               >
                 <Hexagon className="w-6 h-6 text-violet-500" /> t2u.info
-              </a>
+              </Link>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Simplificando conexões e transformando interações em resultados para negócios
                 modernos.
